@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>io.github</groupId>
+    <artifactId>yetyman</artifactId>
+    <version>2025.08.05.1-ALPHA</version>
+    <packaging>pom</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javafx.version>23-ea+22</javafx.version>
+        <sonatype.publish.version>0.7.0</sonatype.publish.version>
+        <maven.compiler.version>3.14.0</maven.compiler.version>
+        <maven.compiler.langLvl>21</maven.compiler.langLvl>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.developer.id>yetyman</project.developer.id>
+        <project.developer.name>Jody S</project.developer.name>
+    </properties>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://mit-license.org/</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>${project.developer.id}</id>
+            <name>${project.developer.name}</name>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>basic-structures</module>
+        <module>misc</module>
+        <module>javafx-helpers</module>
+        <module>javafx-tree-view</module>
+        <module>properties</module>
+        <module>javafx-nine-patch</module>
+        <module>javafx-editor-base</module>
+    </modules>
+
+    <!-- Add dependency management section -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Define versions for shared dependencies -->
+        </dependencies>
+    </dependencyManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version>
+                <configuration>
+                    <source>${maven.compiler.langLvl}</source>
+                    <target>${maven.compiler.langLvl}</target>
+                    <release>${maven.compiler.langLvl}</release>
+                    <testSource>${maven.compiler.langLvl}</testSource>
+                    <testTarget>${maven.compiler.langLvl}</testTarget>
+                    <testRelease>${maven.compiler.langLvl}</testRelease>
+                    <!--                    <compilerArgs>-->
+                    <!--                        <arg>-Xlint:all</arg>-->
+                    <!--                    </compilerArgs>-->
+                </configuration>
+            </plugin>
+        </plugins>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>flatten-maven-plugin</artifactId>
+                    <version>1.7.0</version>
+                    <configuration>
+                        <flattenMode>resolveCiFriendliesOnly</flattenMode>
+                        <outputDirectory>${project.basedir}</outputDirectory>
+                        <flattenedPomFilename>.flattened-pom.xml</flattenedPomFilename>
+                        <updatePomFile>false</updatePomFile>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>flatten</id>
+                            <phase>process-resources</phase>
+                            <goals>
+                                <goal>flatten</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>flatten-clean</id>
+                            <phase>clean</phase>
+                            <goals>
+                                <goal>clean</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.6.3</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.3.1</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jreleaser</groupId>
+                    <artifactId>jreleaser-maven-plugin</artifactId>
+                    <version>1.18.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.kordamp.maven</groupId>
+                    <artifactId>pomchecker-maven-plugin</artifactId>
+                    <version>1.14.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>publication</id>
+            <properties>
+                <altDeploymentRepository>local::file:./target/staging-deploy</altDeploymentRepository>
+            </properties>
+            <build>
+                <defaultGoal>deploy</defaultGoal>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <attach>true</attach>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadoc</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <release>${maven.compiler.langLvl}</release>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-source</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--                    <plugin>-->
+                    <!--                        <groupId>org.sonatype.central</groupId>-->
+                    <!--                        <artifactId>central-publishing-maven-plugin</artifactId>-->
+                    <!--                        <version>${sonatype.publish.version}</version>-->
+                    <!--                        <extensions>true</extensions>-->
+                    <!--                        <configuration>-->
+                    <!--                            <centralBaseUrl>https://central.sonatype.com</centralBaseUrl>-->
+                    <!--                            <publishingServerId>central</publishingServerId>-->
+                    <!--                        </configuration>-->
+                    <!--                    </plugin>-->
+                    <plugin>
+                        <groupId>org.jreleaser</groupId>
+                        <artifactId>jreleaser-maven-plugin</artifactId>
+                        <configuration>
+                            <jreleaser>
+                                <project>
+                                    <copyright>2025</copyright>
+                                    <versionPattern><type>CHRONVER</type></versionPattern>
+                                </project>
+                                <signing>
+                                    <active>ALWAYS</active>
+                                    <armored>true</armored>
+                                    <mode>FILE</mode>
+                                </signing>
+                                <!--
+                                  Verifies pom files, signs all artifacts, verifies that matching `-sources.jar` and
+                                  `-javadoc.jar` artifacts are also staged.
+                                  Defaults to `false`.
+
+                                -->
+                                <deploy>
+                                    <maven>
+                                        <!--                                        <nexus2>-->
+                                        <!--                                            <maven-central>-->
+                                        <!--                                                <active>ALWAYS</active>-->
+                                        <!--                                                <url>https://s01.oss.sonatype.org/service/local</url>-->
+                                        <!--                                                <snapshotUrl>https://s01.oss.sonatype.org/content/repositories/snapshots</snapshotUrl>-->
+                                        <!--                                                <closeRepository>true</closeRepository>-->
+                                        <!--                                                <releaseRepository>true</releaseRepository>-->
+                                        <!--                                                <stagingRepositories>target/staging-deploy</stagingRepositories>-->
+                                        <!--                                            </maven-central>-->
+                                        <!--                                        </nexus2>-->
+                                        <!-- Portal Publisher API -->
+                                        <pomchecker>
+                                            <version>1.14.0</version>
+                                            <failOnWarning>false</failOnWarning>
+                                            <failOnError>false</failOnError>
+                                            <strict>false</strict>
+                                        </pomchecker>
+                                        <mavenCentral>
+                                            <sonatype>
+                                                <active>ALWAYS</active>
+                                                <url>https://central.sonatype.com/api/v1/publisher</url>
+                                                <stagingRepositories>target/staging-deploy</stagingRepositories>
+                                            </sonatype>
+                                        </mavenCentral>
+                                    </maven>
+                                </deploy>
+                            </jreleaser>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <url>https://central.sonatype.com/repository/maven-snapshots</url>
+        </repository>
+    </distributionManagement>
+</project>
