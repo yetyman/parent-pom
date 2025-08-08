@@ -6,38 +6,34 @@ function Test-LastExit {
     }
 }
 
-# Parent directory commands
-Write-Host "Building parent project..." -ForegroundColor Cyan
-mvn clean; Test-LastExit
-mvn compile; Test-LastExit
-mvn -Ppublication; Test-LastExit
-mvn jreleaser:deploy -P release; Test-LastExit
+## Parent directory commands
+#Write-Host "Building parent project..." -ForegroundColor Cyan
+#mvn clean; Test-LastExit
+#mvn compile; Test-LastExit
+#
+## First publish the parent pom
+#Write-Host "Publishing parent pom..." -ForegroundColor Cyan
+#mvn -Ppublication -N; Test-LastExit  # -N flag means 'non-recursive' - parent only
+#mvn jreleaser:deploy -P release -N; Test-LastExit
 
-# Array of modules
+# Then publish individual modules
 $modules = @(
-    "basic-structures",
+#    "basic-structures",
     "javafx-helpers",
     "properties",
+    "javafx-tree-view",
     "javafx-nine-patch",
-    "javafx-tree-view"
+    "javafx-editor-base"
 )
 
-# Loop through each module
 foreach ($module in $modules) {
-    try {
-        Push-Location $module
-        Write-Host "Processing $module..." -ForegroundColor Green
-        
-        mvn -Ppublication; Test-LastExit
-        mvn jreleaser:deploy -P release; Test-LastExit
-    }
-    catch {
-        Write-Host "Error processing $module : $_" -ForegroundColor Red
-        exit 1
-    }
-    finally {
-        Pop-Location
-    }
+    Write-Host "Building individual project..." -ForegroundColor Cyan
+    mvn clean; Test-LastExit
+    mvn compile; Test-LastExit
+
+    Write-Host "Publishing module $($module)..." -ForegroundColor Cyan
+    mvn -Ppublication -pl $module; Test-LastExit
+    mvn jreleaser:deploy -P release -pl $module; Test-LastExit
 }
 
 Write-Host "Deployment completed successfully!" -ForegroundColor Green
